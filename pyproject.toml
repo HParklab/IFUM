@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "IEFFEUM"
+version = "1.0.0"
+description = "In silico Evaluation of Unfolding Free Energy with Unfolded states Modeling"
+readme = "README.md"
+requires-python = ">=3.9"
+
+[tools.setuptools.packages.find]
+where = ["src"]
