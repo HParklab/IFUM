@@ -2,3 +2,4 @@
 **/*.egg-info/
 **/*.ipynb*
 **/*.csv
+**/*-esmfold/
