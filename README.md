@@ -43,8 +43,18 @@ Due to the archival of the ESM repository, installation requires a few specific 
 
 ```
 # 1. Create and activate the Conda environment (this may take some time):
-conda env create -f environment.yaml
+conda create --name IEFFEUM python=3.9
 conda activate IEFFEUM
+conda install cudatoolkit=11.7 -c pytorch
+conda install nvidia/label/cuda-11.7.1::cuda
+
+pip install omegaconf pytorch_lightning==2.1 biopython ml_collections einops py3Dmol modelcif dm-tree torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2
+pip install git+https://github.com/NVIDIA/dllogger.git
+pip install git+https://github.com/sokrypton/openfold.git
+pip install git+https://github.com/facebookresearch/esm.git
+pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.0.1+cu117.html
+pip install torch_geometric biotite transformers numpy==1.26.1 pandas
+
 
 # 2. Clone the IEFFEUM repository and install it:
 git clone https://github.com/HParklab/IEFFEUM.git
