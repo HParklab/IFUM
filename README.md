@@ -5,6 +5,21 @@ Please read the [manuscript](https://www.biorxiv.org/content/10.1101/2025.02.10.
 
 We thank those who support open science. Without them, developing IEFFEUM was impossible.
 
+## Table of Contents
+
+- [Citation](#citation)
+- [Before You Start](#before-you-start)
+- [Installation](#installation)
+    - [Prerequisites](#prerequisites)
+    - [Installation Steps](#installation-steps)
+- [Preparing Input Data](#preparing-input-data)
+    - [Input FASTA File](#input-fasta-file)
+    - [Structure Files (Optional)](#structure-files-optional)
+    - [Running `prepare_IEFFEUM.py`](#running-prepare_ieffeumpy)
+- [Running IEFFEUM](#running-ieffeum)
+- [Output CSV File](#output-csv-file)
+- [(very important) Known Limitations](#known-limitations)
+
 ## Citation
 If you use the code, please cite:
 ```
@@ -18,7 +33,6 @@ If you use the code, please cite:
     URL = {https://www.biorxiv.org/content/10.1101/2025.02.10.637420v1},
 }
 ```
-
 ## Before You Start
 
 IEFFEUM may produce slightly different predicted Δ*G* values when run on different GPUs. For instance, we observed a Δ*G* of 0.20 for MyUb with an A6000, and 0.19 with an A5000.
@@ -138,7 +152,9 @@ MyUb_R1117A,-0.05
 
 ## Known Limitations
 
-IEFFEUM's accuracy is reduced when predicting ΔG values for:
+It's important to be aware that IEFFEUM's accuracy can be significantly reduced (predictions may be biased towards unstable) when working with:
 - Membrane proteins
 - Monomeric structure of obligatory oligomers
-- Proteins with inaccurate or low-quality folded state structures (poor-quality PDB input)
+- Proteins with inaccurate or low-quality folded state structures (i.e., poor-quality PDB input)
+
+These limitations stem from the fact that IEFFEUM's training data primarily consisted of soluble proteins in a PBS buffer environment.
