@@ -10,12 +10,12 @@ We thank those who support open science. Without them, developing IEFFEUM was im
 - [Citation](#citation)
 - [Before You Start](#before-you-start)
 - [Installation](#installation)
-    - [Prerequisites](#prerequisites)
-    - [Installation Steps](#installation-steps)
+    - Prerequisites
+    - Installation Steps
 - [Preparing Input Data](#preparing-input-data)
-    - [Input FASTA File](#input-fasta-file)
-    - [Structure Files (Optional)](#structure-files-optional)
-    - [Running `prepare_IEFFEUM.py`](#running-prepare_ieffeumpy)
+    - Input FASTA File
+    - PDB Files (Optional)
+    - Running `prepare_IEFFEUM.py`
 - [Running IEFFEUM](#running-ieffeum)
 - [Output CSV File](#output-csv-file)
 - [(very important) Known Limitations](#known-limitations)
