@@ -34,20 +34,19 @@ def batch_to_device(batch, device):
     return names, seqs, seq_embds, str_embds, target_Fs, mask_2ds, mask_1ds
 
 def save_results_to_csv(names, p_dGs, p_dGs_per_resi, out_path, per_resi):
+    results = {
+        'name': names,
+        'dG (kcal/mol)': [ _[0] for _ in p_dGs],
+    }
     if per_resi:
-        results = pd.DataFrame({
-            'name': names,
-            'dG (kcal/mol)': [ _[0] for _ in p_dGs],
-            'dG_per_resi (kcal/mol)': [ _[0] for _ in p_dGs_per_resi],
+        results.update({
+            'per_resi_dG(kcal/mol)': [ _[0] for _ in p_dGs_per_resi],
         })
-    else:
-        results = pd.DataFrame({
-            'name': names,
-            'dG (kcal/mol)': [ _[0] for _ in p_dGs],
-        })
+        
+    results = pd.DataFrame(results)
     results.to_csv(out_path, index=False)
     
-    return
+    return results
 
 def get_dataloader_and_model(input_list, model_path, device, batch_size=1):
     batched_dataset = dataset.BatchDataset(input_list)

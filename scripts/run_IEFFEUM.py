@@ -25,7 +25,7 @@ def create_arg_parser():
                         help='A batchsize. (default: 1)')
     
     parser.add_argument( '--per-resi', action='store_true',
-                        help='Report per residue dG contributions too. (default: False)')
+                        help='Report per-residue dG contributions too. (default: False)')
     
     return parser
 
@@ -52,5 +52,5 @@ if __name__ == '__main__':
         
         NAMES, P_DGS, P_DGS_PER_RESI = utils.gather_batch_results(names, results, NAMES, P_DGS, P_DGS_PER_RESI)
         
-    utils.save_results_to_csv(NAMES, P_DGS, P_DGS_PER_RESI, out_path, args.per_resi)
+    results = utils.save_results_to_csv(NAMES, P_DGS, P_DGS_PER_RESI, out_path, args.per_resi)
     print(f'Predictions saved to {out_path}')

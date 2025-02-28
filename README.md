@@ -21,9 +21,7 @@ If you use the code, please cite:
 
 ## Before You Start
 
-**Important Note on GPU Usage:**
-
-Running IEFFEUM on different GPUs (e.g., A5000 vs. A6000) might result in slightly different predicted Δ*G* values.  The exact cause of this discrepancy is currently unknown. (마이유비 설명)
+IEFFEUM may produce slightly different predicted Δ*G* values when run on different GPUs. For instance, we observed a Δ*G* of 0.20 for MyUb with an A6000, and 0.19 with an A5000.
 
 ## Installation
 
@@ -64,7 +62,7 @@ To run IEFFEUM (in batch), you need:
     >MyUb_R1117A
     GTKKYDLSKWKYAELRDTINTSCDIELLAACREEFHRALKVYH
     ```
-    **Important**: IEFFEUM processes sequences in batches for the efficiency, padding them to the length of the longest sequence in each batch. For optimal GPU memory usage, group proteins with similar sequence lengths into the same FASTA file.
+    **Important**: IEFFEUM processes sequences in batches for the efficiency, padding them to the length of the longest sequence in each batch. For optimal GPU memory usage, group proteins with similar sequence lengths into the same FASTA file. Different padding length affects IEFFEUM's prediction.
 
 2. **Structure Files (Optional)**:  You have two options for providing structural information (target folded state):
     - **Option A**: **Provide PDB Files (recommended for longer proteins)**:  Place your `.pdb` files in a directory (e.g., `/PATH/TO/PDBs`).  The filenames should match the sequence identifiers in your FASTA file (e.g., `MyUb_WT.pdb`).
@@ -100,7 +98,7 @@ This script generates the necessary files for IEFFEUM.
 
 After running `prepare_IEFFEUM.py`, you should have:
 
-1. `<FASTA_DIR>/<TARGET>.list`.  For example, if your FASTA file is `/home/usr/IEFFEUM/example/MyUb.fasta`, the generated file will be` /home/usr/IEFFEUM/example/MyUb.list`.
+1. `<FASTA_DIR>/<TARGET>.list`. A file containing the paths to the generated .pt files, where `<FASTA_DIR>` is the directory containing your input FASTA file.
 2. One of the following:
     - `/PATH/TO/PDBs/pt/` directory containing `.pt` files (if you provided PDBs).
     - `/PATH/TO/FASTA/TARGET-esmfold/` directory containing `.pdb` and `TARGET-esmfold/pt/` with `.pt` files (if you used ESMFold).
@@ -117,10 +115,23 @@ Once the input data is prepared, you can run IEFFEUM to calculate the Δ*G*. Not
     -m <path for model params (default: /PATH/TO/IEFFEUM/weights/params.pth)> \
     -o <path for result CSV file (default: ./TARGET.csv)> \
     -b <batch size (default: 1)>
-    퍼 레지듀 설명
+    --per-resi <outputs per residue contribution (default: False)>
 
 # Example:
-# ./scripts/run_IEFFEUM.py -i examples/MyUb.list -o ../MyUb_out.csv -b 100
+# ./scripts/run_IEFFEUM.py -i examples/MyUb.list -o ../MyUb.csv -b 100 --per-resi
 ```
 
-## Inspecting the Output
+## Output CSV file
+
+```
+name,dG(kcal/mol)
+MyUb_WT,0.20
+MyUb_R1117A,-0.05
+```
+
+## Known Limitations
+
+IEFFEUM's accuracy is reduced when predicting ΔG values for:
+- Membrane proteins
+- Monomeric structure of obligatory oligomers
+- Proteins with inaccurate or low-quality folded state structures (poor-quality PDB input)
