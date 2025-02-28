@@ -152,9 +152,9 @@ MyUb_R1117A,-0.05
 
 ## Known Limitations
 
-It's important to be aware that IEFFEUM's accuracy can be significantly reduced (predictions may be biased towards unstable) when working with:
+It's important to be aware that IEFFEUM's accuracy can be significantly reduced (typically biased towards unstable) when working with:
 - Membrane proteins
 - Monomeric structure of obligatory oligomers
 - Proteins with inaccurate or low-quality folded state structures (i.e., poor-quality PDB input)
 
-These limitations stem from the fact that IEFFEUM's training data primarily consisted of soluble proteins in a PBS buffer environment.
+These limitations stem from that IEFFEUM was trained with soluble proteins in a PBS buffer environment.
