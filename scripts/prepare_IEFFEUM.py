@@ -322,20 +322,21 @@ if __name__ == '__main__':
         logger.error(f'Fasta file not found: {seq_path}')
         sys.exit(1)
 
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    logger.info(f"Using device: {device}")
+    
     if args.pdb:
         pdb_path = Path( args.pdb )
         if not pdb_path.exists():
             logger.error(f'PDB directory not found: {args.pdb}')
             sys.exit(1)
+        print('Skipping ESMFold prediction.')
+        
     else:
         pdb_path = Path(f"{args.fasta.replace('.fasta','-esmfold')}")
         os.makedirs(pdb_path, exist_ok=True) # create directory for esmfold
         logger.info(f"PDB directory not provided, using default output directory: {pdb_path}")
-
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    logger.info(f"Using device: {device}")
-
-    run_esmfold(seq_path, pdb_path)
+        run_esmfold(seq_path, pdb_path)
 
     seq_embd = get_seq_embd(seq_path)
     pdb_embd = get_pdb_embd(pdb_path)
