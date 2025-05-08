@@ -62,7 +62,7 @@ def get_dataloader_and_model(input_list, model_path, device, batch_size=1):
 def gather_batch_results(names, results, NAMES, P_DGS, P_DGS_PER_RESI):
     _, p_dGs, p_dGs_per_resi, _ = results
     NAMES.extend(names)
-    P_DGS.extend(p_dGs[0].detach().cpu().numpy().round(2))
-    P_DGS_PER_RESI.extend(p_dGs_per_resi[0].detach().cpu().numpy().round(2))
+    P_DGS.extend(p_dGs[0].detach().cpu().numpy().round(3))
+    P_DGS_PER_RESI.extend(p_dGs_per_resi[0].detach().cpu().numpy().round(3))
     
     return NAMES, P_DGS, P_DGS_PER_RESI

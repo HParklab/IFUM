@@ -159,7 +159,7 @@ def read_fasta_dict( fasta_path ):
             if line.startswith('>'):
                 uniprot_id = line.replace('>', '').strip()
                 # replace tokens that are mis-interpreted when loading h5
-                uniprot_id = uniprot_id.replace("/","_").replace(".","_")
+                # uniprot_id = uniprot_id.replace("/","_").replace(".","_")
                 sequences[ uniprot_id ] = ''
             else:
                 # repl. all whie-space chars and join seqs spanning multiple lines
@@ -259,7 +259,7 @@ def get_pdb_embd(pdb_path):
     with torch.no_grad():
         for pdb in tqdm(pdbs, desc="Processing PDB files"):
             name = Path(pdb).stem
-            name = name.replace(".pdb",'_pdb') # suffix to distinguish from sequence based embeddings
+            # name = name.replace(".pdb",'_pdb') # suffix to distinguish from sequence based embeddings
             try:
                 structure = esm.inverse_folding.util.load_structure(pdb, "A")
                 coords, seq = esm.inverse_folding.util.extract_coords_from_structure(structure)
