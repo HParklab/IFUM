@@ -43,7 +43,7 @@ IEFFEUM requires [ProtT5](https://github.com/agemagician/ProtTrans) and [ESM](ht
 
 **Prerequisites:**
 
-1. **Sufficient RAM** Ensure your system has at least 24GB RAM (required for ESMFold)
+1. **Sufficient RAM:** Ensure your system has at least 24GB RAM (required for ESMFold)
 
 2.  **NVIDIA GPU:**  Ensure your system a compatible NVIDIA GPU with atleast 16GB GRAM and the drivers are correctly installed. Verify with:
 
