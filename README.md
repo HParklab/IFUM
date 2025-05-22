@@ -67,7 +67,7 @@ pip install git+https://github.com/NVIDIA/dllogger.git
 pip install git+https://github.com/sokrypton/openfold.git
 pip install git+https://github.com/facebookresearch/esm.git
 pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.0.1+cu117.html
-pip install torch_geometric biotite transformers sentencepiece numpy==1.26.1 pandas
+pip install torch_geometric biotite transformers==4.49.0 sentencepiece numpy==1.26.1 pandas
 git clone https://github.com/HParklab/IEFFEUM.git
 cd IEFFEUM
 pip install -e .
