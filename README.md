@@ -43,7 +43,7 @@ IEFFEUM requires [ProtT5](https://github.com/agemagician/ProtTrans) and [ESM](ht
 
 **Prerequisites:**
 
-1.  **NVIDIA GPU:**  Ensure your system has a compatible NVIDIA GPU and the drivers are correctly installed. Verify with:
+1.  **NVIDIA GPU:**  Ensure your system has atleast 24GB RAM and a compatible NVIDIA GPU with atleast 16GB GRAM and the drivers are correctly installed. Verify with:
 
     ```bash
     nvidia-smi
