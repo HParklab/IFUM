@@ -43,13 +43,15 @@ IEFFEUM requires [ProtT5](https://github.com/agemagician/ProtTrans) and [ESM](ht
 
 **Prerequisites:**
 
-1.  **NVIDIA GPU:**  Ensure your system has atleast 24GB RAM and a compatible NVIDIA GPU with atleast 16GB GRAM and the drivers are correctly installed. Verify with:
+1. **Sufficient RAM** Ensure your system has at least 24GB RAM (required for ESMFold)
+
+2.  **NVIDIA GPU:**  Ensure your system a compatible NVIDIA GPU with atleast 16GB GRAM and the drivers are correctly installed. Verify with:
 
     ```bash
     nvidia-smi
     ```
 
-2.  **Conda:**  We strongly recommend using [miniconda](https://docs.anaconda.com/miniconda/install/).
+3.  **Conda:**  We strongly recommend using [miniconda](https://docs.anaconda.com/miniconda/install/).
 
 **Installation Steps:**
 
