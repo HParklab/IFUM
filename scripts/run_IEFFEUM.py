@@ -38,19 +38,20 @@ if __name__ == '__main__':
     
     out_path = args.out_path if args.out_path else args.input_list.split('/')[-1].replace('.list','.csv')
     
-    # Create dataset and dataloader
-    dataloader, IEFFEUM = utils.get_dataloader_and_model(args.input_list, args.model_path, device, int(args.batch_size))
-    
-    NAMES, P_DGS, P_DGS_PER_RESI = [], [], []
-    
-    # Iterate through a batch
-    for batch in tqdm(dataloader):
-        names, seqs, seq_embds, str_embds, target_Fs_cords, mask_2ds, mask_1ds = utils.batch_to_device(batch, device)
-        target_Fs_onehot = utils.get_target_F_onehot(target_Fs_cords)
+    with torch.no_grad():
+        # Create dataset and dataloader
+        dataloader, IEFFEUM = utils.get_dataloader_and_model(args.input_list, args.model_path, device, int(args.batch_size))
         
-        results = IEFFEUM(target_Fs_onehot, seq_embds, str_embds, mask_1ds, mask_2ds) # p_ensembles, p_dGs, p_dGs_per_resi, _ = results
+        NAMES, P_DGS, P_DGS_PER_RESI = [], [], []
         
-        NAMES, P_DGS, P_DGS_PER_RESI = utils.gather_batch_results(names, results, NAMES, P_DGS, P_DGS_PER_RESI)
-        
-    results = utils.save_results_to_csv(NAMES, P_DGS, P_DGS_PER_RESI, out_path, args.per_resi)
-    print(f'Predictions saved to {out_path}')
+        # Iterate through a batch
+        for batch in tqdm(dataloader):
+            names, seqs, seq_embds, str_embds, target_Fs_cords, mask_2ds, mask_1ds = utils.batch_to_device(batch, device)
+            target_Fs_onehot = utils.get_target_F_onehot(target_Fs_cords)
+            
+            results = IEFFEUM(target_Fs_onehot, seq_embds, str_embds, mask_1ds, mask_2ds) # p_ensembles, p_dGs, p_dGs_per_resi, _ = results
+            
+            NAMES, P_DGS, P_DGS_PER_RESI = utils.gather_batch_results(names, results, NAMES, P_DGS, P_DGS_PER_RESI)
+            
+        results = utils.save_results_to_csv(NAMES, P_DGS, P_DGS_PER_RESI, out_path, args.per_resi)
+        print(f'Predictions saved to {out_path}')
