@@ -81,7 +81,7 @@ def create_arg_parser():
     )
     parser.add_argument(
         '--per-resi', action='store_true',
-        help='Report per-residue dG contributions in the output CSV. (default: False)'
+        help='Report per-residue dG contributions in the output CSV and input PDBs. (default: False)'
     )
     parser.add_argument(
         '--keep-intermediates', action='store_true',
@@ -249,6 +249,17 @@ def prepare_ieffeum_inputs(seq_embd, pdb_embd, pt_dir):
     logger.info(f"IEFFEUM input preparation finished. {processed_names}/{total_names} proteins prepared.")
     return out_dict
 
+def write_per_resi_to_pdb(pdb_path, names, p_dGs_per_resi):
+    pdbs = [f'{pdb_path}/{name}.pdb' for name in names] if os.path.isdir(pdb_path) else [pdb_path]
+    for pdb, p_dgs_per_resi in zip(pdbs, p_dGs_per_resi):
+        with open(pdb, 'r') as f:
+            lines = f.readlines()
+        with open(pdb, 'w') as f:
+            for line in lines:
+                f.write(line)
+            for i, dg in enumerate(p_dgs_per_resi[0]):
+                f.write(f'per_resi_dg_{i+1} {float(dg):.3f}\n')
+
 if __name__ == '__main__':
     parser = create_arg_parser()
     args = parser.parse_args()
@@ -291,13 +302,16 @@ if __name__ == '__main__':
         sys.exit(1)
 
     # If input was PDB, extract sequences from the PDB embedding dict
-    if not input_path.is_file() or input_path.suffix.lower() != '.fasta':
+    if not (input_path.is_file() and input_path.suffix.lower() == '.fasta'):
         seq_dict = {name: data[1] for name, data in pdb_embd.items()}
 
     seq_embd = get_seq_embd(device, seq_dict)
 
     # --- Combine and Save Inputs ---
     ieffeum_input_dict = prepare_ieffeum_inputs(seq_embd, pdb_embd, pt_dir)
+    if not ieffeum_input_dict['name']:
+        logger.error("No valid inputs could be prepared for IEFFEUM. Exiting.")
+        sys.exit(1)
 
     # Create the list file in memory for the next step
     list_file_path = temp_dir / 'ieffeum_inputs.list'
@@ -324,15 +338,18 @@ if __name__ == '__main__':
         _ = utils.save_results_to_csv(NAMES, P_DGS, P_DGS_PER_RESI, out_csv_path, args.per_resi)
         logger.info(f"Predictions successfully saved to {out_csv_path}")
 
-    # --- START: NEW CLEANUP BLOCK ---
+    if args.per_resi:
+        write_per_resi_to_pdb(pdb_path_for_emb, NAMES, P_DGS_PER_RESI)
+        logger.info("Writing per-residue dG contributions to PDB files.")
+
     # Clean up intermediate files unless the user wants to keep them
     if not args.keep_intermediates:
         try:
             shutil.rmtree(pt_dir)
+            os.remove(list_file_path)
         except OSError as e:
             logger.error(f"Error removing directory {pt_dir}: {e}")
     else:
         logger.info(f"Intermediate files kept at: {pt_dir}")
-    # --- END: NEW CLEANUP BLOCK ---
 
     logger.info("Workflow finished successfully.")
