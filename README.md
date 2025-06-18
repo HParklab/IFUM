@@ -45,7 +45,7 @@ IEFFEUM requires [ProtT5](https://github.com/agemagician/ProtTrans) and [ESM](ht
 
 ### Prerequisites:
 
-1.  **Sufficient RAM:** Ensure your system has at least 24GB RAM (required for ESMFold). You may need less RAM if you only use pre-computed PDB files.
+1.  **Sufficient RAM:** Ensure your system has at least 24GB RAM (required for ESMFold). You may need less RAM if you only use pre-computed PDB or CIF files.
 
 2.  **NVIDIA GPU:** Ensure your system has a compatible NVIDIA GPU with at least 16GB of VRAM and the drivers are correctly installed. Verify with:
     ```bash
@@ -96,14 +96,14 @@ To run IEFFEUM, you must provide one of the following as input:
     ```
     **Important**: For optimal GPU memory usage, group proteins with similar sequence lengths into the same FASTA file. Different padding lengths can affect IEFFEUM's prediction.
 
-2.  **A Directory of PDB Files**: A path to a directory containing pre-computed structure files (`.pdb`). This is recommended for longer proteins or when you have high-quality experimental structures. The PDB filenames (without the extension) must match the sequence identifiers that would be in a FASTA file.
+2.  **A Directory of Structure Files**: A path to a directory containing pre-computed structure files (`.pdb`or`.cif`). This is recommended for longer proteins or when you have high-quality experimental structures. The PDB filenames (without the extension) must match the sequence identifiers that would be in a FASTA file.
     ```
-    # example: /PATH/TO/PDBs
+    # example: /PATH/TO/FILES
     /PATH/
     └── TO/
-        └── PDBs/
+        └── FILES/
             ├── MyUb_WT.pdb
-            └── MyUb_R1117A.pdb
+            └── MyUb_R1117A.cif
     ```
 
 ### Running the Script
@@ -117,10 +117,10 @@ Here are examples for the two main workflows. The script handles all intermediat
         --out-path /path/to/your/results.csv
     ```
 
-* **Option B: Starting from a directory of PDB files (or a direct PDB file)**
+* **Option B: Starting from a directory of structure files (or a direct `.pdb`/`.cif` file)**
     ```bash
     ./scripts/predict.py \
-        --input-path /path/to/your/pdb_directory/ \
+        --input-path /path/to/your/directory/ \
         --out-path /path/to/your/results.csv
     
     ./scripts/predict.py \
@@ -133,7 +133,7 @@ Here are examples for the two main workflows. The script handles all intermediat
 ### Command-line Arguments
 
 ```
--i, --input-path      (Required) Path to an input i) FASTA file or ii) PDB file or iii) a directory of PDB files.
+-i, --input-path      (Required) Path to an input i) FASTA file or ii) PDB/CIF file or iii) a directory of PDB/CIF files.
 -o, --out-path        (Optional) Path for the final output CSV file. Defaults to a name based on the input.
 -m, --model-path      (Optional) Path to the IEFFEUM model parameters (.pth file).
 -b, --batch-size      (Optional) Batch size for IEFFEUM inference. Default: 1.

@@ -6,10 +6,10 @@
 # This script combines the functionality of prepare_IEFFEUM.py and run_IEFFEUM.py.
 #
 # It provides an end-to-end workflow:
-# 1. Input: Takes a single FASTA file OR a directory of PDB files.
+# 1. Input: Takes a single FASTA file OR a directory of PDB/CIF files.
 # 2. Preparation:
 #    - If FASTA is input: Predicts structures with ESMFold.
-#    - If PDBs are input: Skips prediction and extracts sequences directly.
+#    - If PDBs/CIFs are input: Skips prediction and extracts sequences directly.
 #    - Generates ProtT5 (sequence) and ESM-IF1 (structure) embeddings.
 #    - Creates the necessary .pt and .list files for IEFFEUM.
 # 3. Execution:
@@ -65,7 +65,7 @@ def create_arg_parser():
         '-i', '--input-path', required=True, type=str,
         help='Path to an input file or directory.\n'
              '- If a .fasta file, structures will be predicted with ESMFold.\n'
-             '- If a directory, it should contain .pdb files.'
+             '- If a directory, it should contain .pdb or .cif files.'
     )
     parser.add_argument(
         '-o', '--out-path', required=False, type=str, default=None,
@@ -81,7 +81,7 @@ def create_arg_parser():
     )
     parser.add_argument(
         '--per-resi', action='store_true',
-        help='Report per-residue dG contributions in the output CSV and input PDBs. (default: False)'
+        help='Report per-residue dG contributions in the output CSV and input PDBs/CIFs. (default: False)'
     )
     parser.add_argument(
         '--keep-intermediates', action='store_true',
@@ -93,8 +93,7 @@ def create_arg_parser():
     )
     return parser
 
-# --- Data Preparation Functions (from prepare_IEFFEUM.py) ---
-
+# --- Data Preparation Functions ---
 def create_batched_sequence_datasest(
     sequences: T.List[T.Tuple[str, str]], max_tokens_per_batch: int = 1024
 ) -> T.Generator[T.Tuple[T.List[str], T.List[str]], None, None]:
@@ -198,24 +197,26 @@ def get_seq_embd(device, seq_dict, max_residues=4000, max_seq_len=1000, max_batc
     return emb_dict
 
 def get_pdb_embd(pdb_path, device):
-    """Generates ESM-IF1 embeddings for pdb files and extracts sequences."""
+    """Generates ESM-IF1 embeddings for PDB/CIF files and extracts sequences."""
     model, alphabet = esm.pretrained.esm_if1_gvp4_t16_142M_UR50()
     model = model.to(device).eval()
     
-    pdbs = glob(f"{pdb_path}/*.pdb") if os.path.isdir(pdb_path) else [pdb_path]
-    logger.info(f'Found {len(pdbs)} PDB file(s) to process for ESM-IF1 embeddings.')
+    structure_files = glob(f"{pdb_path}/*.pdb") + glob(f"{pdb_path}/*.cif") if os.path.isdir(pdb_path) else [pdb_path]
+    logger.info(f'Found {len(structure_files)} PDB/CIF file(s) to process for ESM-IF1 embeddings.')
     emb_dict = dict()
 
     with torch.no_grad():
-        for pdb in tqdm(pdbs, desc="Processing PDB files (ESM-IF1)"):
-            name = Path(pdb).stem
+        for struct_file_path in tqdm(structure_files, desc="Processing PDB/CIF files (ESM-IF1)"):
+            struct_file = Path(struct_file_path)
+            name = struct_file.stem
             try:
-                structure = esm.inverse_folding.util.load_structure(str(pdb), "A")
+                structure = esm.inverse_folding.util.load_structure(str(struct_file), "A")
                 coords, seq = esm.inverse_folding.util.extract_coords_from_structure(structure)
+
                 rep = esm.inverse_folding.util.get_encoder_output(model, alphabet, coords)
                 emb_dict[name] = [rep.detach().cpu().numpy(), seq, coords[:, 2]]
             except Exception as e:
-                logger.error(f"Error processing PDB {pdb}: {e}")
+                logger.error(f"Error processing structure file {struct_file}: {e}")
                 continue
     logger.info('ESM-IF1 embeddings finished.')
     del model, alphabet
@@ -232,7 +233,7 @@ def prepare_ieffeum_inputs(seq_embd, pdb_embd, pt_dir):
     out_dict = {'name': [], 'file': []}
     for name in tqdm(seq_embd.keys(), desc="Creating .pt files"):
         if name not in pdb_embd:
-            logger.warning(f"Skipping {name} as no corresponding PDB embedding was found.")
+            logger.warning(f"Skipping {name} as no corresponding PDB/CIF embedding was found.")
             continue
         prott5 = seq_embd[name]
         esm_if1, seq, CA = pdb_embd[name]
@@ -250,15 +251,22 @@ def prepare_ieffeum_inputs(seq_embd, pdb_embd, pt_dir):
     return out_dict
 
 def write_per_resi_to_pdb(pdb_path, names, p_dGs_per_resi):
-    pdbs = [f'{pdb_path}/{name}.pdb' for name in names] if os.path.isdir(pdb_path) else [pdb_path]
-    for pdb, p_dgs_per_resi in zip(pdbs, p_dGs_per_resi):
-        with open(pdb, 'r') as f:
-            lines = f.readlines()
-        with open(pdb, 'w') as f:
-            for line in lines:
-                f.write(line)
+    structure_files = []
+    if os.path.isdir(pdb_path):
+        for name in names:
+            pdb_file = f'{pdb_path}/{name}.pdb'
+            cif_file = f'{pdb_path}/{name}.cif'
+            if os.path.exists(pdb_file):
+                structure_files.append(pdb_file)
+            elif os.path.exists(cif_file):
+                structure_files.append(cif_file)
+    else:
+        structure_files = [pdb_path]
+
+    for struct_file, p_dgs_per_resi in zip(structure_files, p_dGs_per_resi):
+        with open(struct_file, 'a') as f: # Open in append mode
             for i, dg in enumerate(p_dgs_per_resi[0]):
-                f.write(f'per_resi_dg_{i+1} {float(dg):.3f}\n')
+                f.write(f'# per_resi_dg_{i+1} {float(dg):.3f}\n')
 
 if __name__ == '__main__':
     parser = create_arg_parser()
@@ -272,13 +280,20 @@ if __name__ == '__main__':
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     logger.info(f"Using device: {device}")
 
-    temp_dir = Path(args.input_path).parent
+    input_path = Path(args.input_path)
+
+    if input_path.is_dir():
+        temp_dir = input_path
+    else:
+        temp_dir = input_path.parent
+
     pt_dir = temp_dir / 'pt_embeddings'
     pdb_out_dir = temp_dir / 'esmfold_pdbs'
 
     os.makedirs(pt_dir, exist_ok=True)
 
-    input_path = Path(args.input_path)
+    pdb_path_for_emb = None
+    seq_dict = {}
 
     # --- Data Preparation ---
     if input_path.is_file() and input_path.suffix.lower() == '.fasta':
@@ -286,22 +301,26 @@ if __name__ == '__main__':
         os.makedirs(pdb_out_dir, exist_ok=True)
         run_esmfold(input_path, pdb_out_dir, device)
         pdb_path_for_emb = pdb_out_dir
-        seq_dict = {Path(name).stem: seq for name, seq in read_fasta(input_path)}
+        seq_dict = {Path(fasta_entry[0]).stem: fasta_entry[1] for fasta_entry in read_fasta(input_path)}
 
-    elif input_path.is_dir() or (input_path.is_file() and input_path.suffix.lower() == '.pdb'):
-        logger.info("PDB input detected. Skipping ESMFold.")
-        pdb_path_for_emb = input_path
+    elif (
+        input_path.is_dir()
+        or input_path.is_file()
+        and input_path.suffix.lower() in {'.pdb', '.cif'}
+    ):
+        logger.info("PDB/CIF input detected. Skipping ESMFold.")
+        pdb_path_for_emb = args.input_path
     else:
-        logger.error(f"Invalid input path: {args.input_path}. Please provide a .fasta file or a directory of .pdb files.")
+        logger.error(f"Invalid input path: {args.input_path}. Please provide a .fasta file, a .pdb/.cif file, or a directory of .pdb/.cif files.")
         sys.exit(1)
 
     # --- Generate Embeddings ---
     pdb_embd = get_pdb_embd(pdb_path_for_emb, device)
     if not pdb_embd:
-        logger.error("No PDB embeddings could be generated. Exiting.")
+        logger.error("No PDB/CIF embeddings could be generated. Exiting.")
         sys.exit(1)
 
-    # If input was PDB, extract sequences from the PDB embedding dict
+    # If input was PDB/CIF, extract sequences from the embedding dict
     if not (input_path.is_file() and input_path.suffix.lower() == '.fasta'):
         seq_dict = {name: data[1] for name, data in pdb_embd.items()}
 
@@ -335,12 +354,12 @@ if __name__ == '__main__':
             results = IEFFEUM(target_Fs_onehot, seq_embds, str_embds, mask_1ds, mask_2ds)
             NAMES, P_DGS, P_DGS_PER_RESI = utils.gather_batch_results(names, results, NAMES, P_DGS, P_DGS_PER_RESI)
 
-        _ = utils.save_results_to_csv(NAMES, P_DGS, P_DGS_PER_RESI, out_csv_path, args.per_resi)
+        _ = utils.save_results_to_csv(NAMES, P_DGS, P_DGS_PER_RESI, out_csv_path,)
         logger.info(f"Predictions successfully saved to {out_csv_path}")
 
     if args.per_resi:
         write_per_resi_to_pdb(pdb_path_for_emb, NAMES, P_DGS_PER_RESI)
-        logger.info("Writing per-residue dG contributions to PDB files.")
+        logger.info("Writing per-residue dG contributions to PDB/CIF files.")
 
     # Clean up intermediate files unless the user wants to keep them
     if not args.keep_intermediates:
@@ -348,7 +367,7 @@ if __name__ == '__main__':
             shutil.rmtree(pt_dir)
             os.remove(list_file_path)
         except OSError as e:
-            logger.error(f"Error removing directory {pt_dir}: {e}")
+            logger.error(f"Error during cleanup: {e}")
     else:
         logger.info(f"Intermediate files kept at: {pt_dir}")
 

@@ -1,6 +1,5 @@
 import os
 from pymol import cmd
-import gzip
 import numpy as np
 
 one_letter = {
@@ -9,6 +8,14 @@ one_letter = {
     'ARG':'R', 'LYS':'K', 'SER':'S', 'THR':'T', 'MET':'M', 'ALA':'A',
     'GLY':'G', 'PRO':'P', 'CYS':'C'
 }
+
+def read_pdb( fname ):
+    if os.path.exists(f"{fname}.pdb"):
+        return open(f"{fname}.pdb")
+    elif os.path.exists(f"{fname}.cif"):
+        return open(f"{fname}.cif")
+    else:
+        return False
 
 def pdg_to_color(pdg, min_pdg, max_pdg):
     # map pdg: low -> red, 0+ -> white
@@ -27,23 +34,27 @@ def pdg_to_color(pdg, min_pdg, max_pdg):
     color = "0x%02x%02x%02x" % (r, g, b)
     return color
 
-pdbnames = cmd.get_object_list()
+object_names = cmd.get_object_list()
 
-for pdbname in pdbnames:
+for name in object_names:
+    f = read_pdb(name)
+    if not f:
+        print(f"Could not find PDB or CIF file for {name}. Skipping.")
+        continue
+
     seqs = []
     pdgs = []
 
-    with open(f"{pdbname}.pdb", 'r') as f:
-        for line in f:
-            if not "per_resi_dg" in line:
-                continue
+    for line in f:
+        if "# per_resi_dg" not in line:
+            continue
 
-            sp = line.strip().split()
-            seqpos = int(sp[0].split("_")[-1])
-            pdg = float(sp[1])
+        sp = line.strip().split()
+        seqpos = int(sp[1].split("_")[-1])
+        pdg = float(sp[2])
 
-            seqs.append(seqpos)
-            pdgs.append(pdg)
+        seqs.append(seqpos)
+        pdgs.append(pdg)
 
 
     # determine actual data range
@@ -53,7 +64,7 @@ for pdbname in pdbnames:
     max_pdg = 0
 
     low_pdgs = []
-    
+
     for seqpos in range(1, max(seqs)+1):
         if ( seqpos not in seqs):
             continue
@@ -63,19 +74,19 @@ for pdbname in pdbnames:
         color = pdg_to_color(pdg, min_pdg, max_pdg)
 
         if ( pdg < 0 ):
-            cmd.color(color, f"resi {seqpos} and {pdbname}")
+            cmd.color(color, f"resi {seqpos} and {name}")
             # retrieve the CA atom to get its 3-letter resn, map to one-letter, then label
-            model = cmd.get_model(f"resi {seqpos} and name CA and {pdbname}")
+            model = cmd.get_model(f"resi {seqpos} and name CA and {name}")
             if model.atom and pdg < -0.08:
                 resn3 = model.atom[0].resn
                 resn1 = one_letter.get(resn3, 'X')
-                cmd.label(f"resi {seqpos} and name CA and {pdbname}", f"\"{resn1}{seqpos}: {pdg}\"")
+                cmd.label(f"resi {seqpos} and name CA and {name}", f"\"{resn1}{seqpos}: {pdg}\"")
                 low_pdgs.append(seqpos)
-        
+
         else:
-            cmd.color("white", f"resi {seqpos} and {pdbname}")
-        
+            cmd.color("white", f"resi {seqpos} and {name}")
+
     if low_pdgs:
-        cmd.select(f"{pdbname}_low_pdgs", f"resi {'+'.join(map(str, low_pdgs))} and {pdbname}")
+        cmd.select(f"{name}_low_pdgs", f"resi {'+'.join(map(str, low_pdgs))} and {name}")
 
 cmd.deselect()

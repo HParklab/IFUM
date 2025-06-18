@@ -33,11 +33,12 @@ def batch_to_device(batch, device):
     
     return names, seqs, seq_embds, str_embds, target_Fs, mask_2ds, mask_1ds
 
-def save_results_to_csv(names, p_dGs, p_dGs_per_resi, out_path, per_resi):
+def save_results_to_csv(names, p_dGs, p_dGs_per_resi, out_path, per_resi=False):
     results = {
         'name': names,
         'dG (kcal/mol)': [ _[0] for _ in p_dGs],
     }
+    # deprecated
     if per_resi:
         results.update({
             'per_resi_dG(kcal/mol)': [ _[0] for _ in p_dGs_per_resi],
