@@ -74,7 +74,7 @@ def create_arg_parser():
     )
     parser.add_argument(
         # '-m', '--model-path', required=False, type=str, default=os.path.join(script_dir, '..', 'weights', 'params.pth'),
-        '-m', '--model-path', required=False, type=str, default='/home/annung202/ieffeum-flory/seq-pred-too/1121/weights/0626-1902.25/epoch-25.pth',
+        '-m', '--model-path', required=False, type=str, default='/home/annung202/ieffeum-flory/seq-pred-too/1121/weights/0627-1759.10/epoch-81.pth',
         help='Path to IEFFEUM parameters (.pth file).'
     )
     parser.add_argument(
