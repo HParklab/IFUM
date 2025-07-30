@@ -1,11 +1,11 @@
-# IEFFEUM
-IEFFEUM (***I***n silico ***E***valuation of un***F***olding ***F***ree ***E***nergy with ***U***nfolded state ensemble ***M***odeling, 이쁨)
+# IFUM
+IFUM (***I***n silico ***E***valuation of un***F***olding ***F***ree ***E***nergy with ***U***nfolded state ensemble ***M***odeling, 이쁨)
 
 ![image](ieffeum.png)
 
-Please read the [manuscript](https://www.biorxiv.org/content/10.1101/2025.02.10.637420v1) before you use IEFFEUM.
+Please read the [manuscript](https://www.biorxiv.org/content/10.1101/2025.02.10.637420v1) before you use IFUM.
 
-We thank those who support open science. Without them, developing IEFFEUM was impossible.
+We thank those who support open science. Without them, developing IFUM was impossible.
 
 ## Table of Contents
 
@@ -37,11 +37,11 @@ If you use the code, please cite:
 ```
 ## Before You Start
 
-IEFFEUM may produce slightly different predicted Δ*G* values when run on different GPUs. For instance, we observed a Δ*G* of 0.20 for MyUb with an A6000, and 0.19 with an A5000.
+IFUM may produce slightly different predicted Δ*G* values when run on different GPUs. For instance, we observed a Δ*G* of 0.20 for MyUb with an A6000, and 0.19 with an A5000.
 
 ## Installation
 
-IEFFEUM requires [ProtT5](https://github.com/agemagician/ProtTrans) and [ESM](https://github.com/facebookresearch/esm) (specifically, ESM-IF1).
+IFUM requires [ProtT5](https://github.com/agemagician/ProtTrans) and [ESM](https://github.com/facebookresearch/esm) (specifically, ESM-IF1).
 
 ### Prerequisites:
 
@@ -60,8 +60,8 @@ Due to the archival of the ESM repository, installation requires a few specific 
 
 ```bash
 # create conda environment
-conda create --name IEFFEUM python=3.9
-conda activate IEFFEUM
+conda create --name IFUM python=3.9
+conda activate IFUM
 conda install conda-forge::cudatoolkit=11.7
 conda install nvidia/label/cuda-11.7.1::cuda
 ```
@@ -73,8 +73,8 @@ pip install git+https://github.com/sokrypton/openfold.git
 pip install git+https://github.com/facebookresearch/esm.git
 pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.0.1+cu117.html
 pip install torch_geometric biotite transformers==4.49.0 sentencepiece numpy==1.26.1 pandas
-git clone https://github.com/HParklab/IEFFEUM.git
-cd IEFFEUM
+git clone https://github.com/HParklab/IFUM.git
+cd IFUM
 pip install -e .
 ```
 
@@ -84,7 +84,7 @@ The preparation and execution steps have been merged into a single, convenient s
 
 ### Input Data
 
-To run IEFFEUM, you must provide one of the following as input:
+To run IFUM, you must provide one of the following as input:
 
 1.  **A FASTA File (`.fasta`)**: A file containing the amino acid sequences of your proteins. If you use this option, the script will automatically use ESMFold to predict the 3D structures.
     ```
@@ -94,7 +94,7 @@ To run IEFFEUM, you must provide one of the following as input:
     >MyUb_R1117A
     GTKKYDLSKWKYAELRDTINTSCDIELLAACREEFHRALKVYH
     ```
-    **Important**: For optimal GPU memory usage, group proteins with similar sequence lengths into the same FASTA file. Different padding lengths can affect IEFFEUM's prediction.
+    **Important**: For optimal GPU memory usage, group proteins with similar sequence lengths into the same FASTA file. Different padding lengths can affect IFUM's prediction.
 
 2.  **A Directory of Structure Files**: A path to a directory containing pre-computed structure files (`.pdb`or`.cif`). This is recommended for longer proteins or when you have high-quality experimental structures. The PDB filenames (without the extension) must match the sequence identifiers that would be in a FASTA file.
     ```
@@ -128,15 +128,15 @@ Here are examples for the two main workflows. The script handles all intermediat
         --out-path /path/to/your/results.csv
     ```
 
-**Important Note on Predicted Structures:** It is highly recommended to visually inspect any predicted structures (e.g., from ESMFold). [Poorly predicted structures can negatively impact IEFFEUM's accuracy](https://www.biorxiv.org/content/10.1101/2025.02.10.637420v1). Consider using pre-computed, high-quality structures when available (e.g., from [AlphaFold DB](https://alphafold.ebi.ac.uk/) or experimental methods).
+**Important Note on Predicted Structures:** It is highly recommended to visually inspect any predicted structures (e.g., from ESMFold). [Poorly predicted structures can negatively impact IFUM's accuracy](https://www.biorxiv.org/content/10.1101/2025.02.10.637420v1). Consider using pre-computed, high-quality structures when available (e.g., from [AlphaFold DB](https://alphafold.ebi.ac.uk/) or experimental methods).
 
 ### Command-line Arguments
 
 ```
 -i, --input-path      (Required) Path to an input i) FASTA file or ii) PDB/CIF file or iii) a directory of PDB/CIF files.
 -o, --out-path        (Optional) Path for the final output CSV file. Defaults to a name based on the input.
--m, --model-path      (Optional) Path to the IEFFEUM model parameters (.pth file).
--b, --batch-size      (Optional) Batch size for IEFFEUM inference. Default: 1.
+-m, --model-path      (Optional) Path to the IFUM model parameters (.pth file).
+-b, --batch-size      (Optional) Batch size for IFUM inference. Default: 1.
 --per-resi            (Optional) Flag to report per-residue dG contributions in the output CSV.
 --keep-intermediates  (Optional) Flag to prevent the deletion of intermediate embedding files. Useful for debugging.
 --quiet               (Optional) Flag to reduce console output.
@@ -163,9 +163,9 @@ MyUb_R1117A,-0.05
 
 ## Known Limitations
 
-It's important to be aware that IEFFEUM's accuracy can be significantly reduced (typically biased towards unstable) when working with:
+It's important to be aware that IFUM's accuracy can be significantly reduced (typically biased towards unstable) when working with:
 - Membrane proteins
 - Monomeric structure of obligatory oligomers
 - Proteins with inaccurate or low-quality folded state structures (i.e., poor-quality PDB input)
 
-These limitations stem from the fact that IEFFEUM was trained with soluble proteins in a PBS buffer environment.
+These limitations stem from the fact that IFUM was trained with soluble proteins in a PBS buffer environment.
