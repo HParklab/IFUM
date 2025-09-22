@@ -1,5 +1,5 @@
 # IFUM
-IFUM (***I***n silico ***E***valuation of un***F***olding ***F***ree ***E***nergy with ***U***nfolded state ensemble ***M***odeling, 이쁨)
+IFUM (***I***n silico ***E***valuation of un***F***olding ***F***ree ***E***nergy with ***U***nfolded state ensemble ***M***odeling, 이쁨, was ieffeum before)
 
 ![image](ieffeum.png)
 
@@ -56,7 +56,7 @@ IFUM requires [ProtT5](https://github.com/agemagician/ProtTrans) and [ESM](https
 
 ### Installation Steps:
 
-Due to the archival of the ESM repository, installation requires a few specific steps. These commands have been tested for the unified script.
+Due to the archival of the ESM repository, installation requires a few specific steps. These commands have been tested for the unified script. (~20m)
 
 ```bash
 # create conda environment
@@ -108,7 +108,7 @@ To run IFUM, you must provide one of the following as input:
 
 ### Running the Script
 
-Here are examples for the two main workflows. The script handles all intermediate steps automatically.
+Here are examples for the two main workflows. The script handles all intermediate steps automatically. (~15s for a single protein if esm and prott5 are cached)
 
 * **Option A: Starting from a FASTA file (uses ESMFold)**
     ```bash
@@ -169,3 +169,6 @@ It's important to be aware that IFUM's accuracy can be significantly reduced (ty
 - Proteins with inaccurate or low-quality folded state structures (i.e., poor-quality PDB input)
 
 These limitations stem from the fact that IFUM was trained with soluble proteins in a PBS buffer environment.
+
+## Reproduction
+To run IFUM on Mega-scale data for reproduction, 1. get the full sequence list from the [Mega-scale zenodo](https://zenodo.org/records/7992926) 2. and run IFUM as above. Note that the result may vary based on your [hardware](#before-you-start) or a *random* seed.
