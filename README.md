@@ -10,8 +10,8 @@ We thank those who support open science. Without them, developing IFUM was impos
 ## Table of Contents
 
 - [Citation](#citation)
+- [Colab Implementation](#colab-implementation)
 - [Before You Start](#before-you-start)
-- [Colab Implementaion](#colab-implmemntation)
 - [Installation](#installation)
     - [Prerequisites](#prerequisites)
     - [Installation Steps](#installation-steps)
@@ -36,13 +36,13 @@ If you use the code, please cite:
     URL = {[https://www.biorxiv.org/content/10.1101/2025.02.10.637420v2](https://www.biorxiv.org/content/10.1101/2025.02.10.637420v2)},
 }
 ```
+## Colab Implementation
+
+For a user-friendly version of IFUM, use this [Colab notebook](https://colab.research.google.com/drive/14TbHFp-BXfiv0vrCSNxyIlqMDOWX-8nV?usp=sharing#scrollTo=Evx4TGQqP3tc).
+
 ## Before You Start
 
 IFUM may produce slightly different predicted Δ*G* values when run on different GPUs. For instance, we observed a Δ*G* of 0.20 for MyUb with an A6000, and 0.19 with an A5000.
-
-### Colab Implementation
-
-For a user-friendly version of IFUM, use this [Colab notebook](https://colab.research.google.com/drive/14TbHFp-BXfiv0vrCSNxyIlqMDOWX-8nV?usp=sharing#scrollTo=Evx4TGQqP3tc).
 
 ## Installation
 
