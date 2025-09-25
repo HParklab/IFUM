@@ -54,6 +54,10 @@ IFUM requires [ProtT5](https://github.com/agemagician/ProtTrans) and [ESM](https
 
 3.  **Conda:** We strongly recommend using [miniconda](https://docs.anaconda.com/miniconda/install/).
 
+### Colab Implementation
+
+For a user-friendly version of IFUM, use this [Colab notebook](https://colab.research.google.com/drive/14TbHFp-BXfiv0vrCSNxyIlqMDOWX-8nV?usp=sharing#scrollTo=Evx4TGQqP3tc).
+
 ### Installation Steps:
 
 Due to the archival of the ESM repository, installation requires a few specific steps. These commands have been tested for the unified script. (~20m)
