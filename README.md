@@ -3,7 +3,7 @@ IFUM (***I***n silico ***E***valuation of un***F***olding ***F***ree ***E***nerg
 
 ![image](ieffeum.png)
 
-Please read the [manuscript](https://www.biorxiv.org/content/10.1101/2025.02.10.637420v1) before you use IFUM.
+Please read the [manuscript](https://www.biorxiv.org/content/10.1101/2025.02.10.637420v2) before you use IFUM.
 
 We thank those who support open science. Without them, developing IFUM was impossible.
 
@@ -27,12 +27,12 @@ If you use the code, please cite:
 ```
 @article{
     doi:10.1101/2025.02.10.637420,
-    author = {Heechan Lee and Hahnbeom Park},
+    author = {Heechan Lee, Yugyeong Cho, Jeongwon Yun, Martin Steinegger, Ho Min Kim, Hahnbeom Park},
     title = {Protein folding stability estimation with an explicit consideration of unfolded states},
     journal = {bioRxiv},
     year = = {2025},
     doi = {10.1101/2025.02.10.637420},
-    URL = {[https://www.biorxiv.org/content/10.1101/2025.02.10.637420v1](https://www.biorxiv.org/content/10.1101/2025.02.10.637420v1)},
+    URL = {[https://www.biorxiv.org/content/10.1101/2025.02.10.637420v2](https://www.biorxiv.org/content/10.1101/2025.02.10.637420v2)},
 }
 ```
 ## Before You Start
