@@ -11,6 +11,7 @@ We thank those who support open science. Without them, developing IFUM was impos
 
 - [Citation](#citation)
 - [Before You Start](#before-you-start)
+- [Colab Implementaion](#colab-implmemntation)
 - [Installation](#installation)
     - [Prerequisites](#prerequisites)
     - [Installation Steps](#installation-steps)
@@ -39,6 +40,10 @@ If you use the code, please cite:
 
 IFUM may produce slightly different predicted Δ*G* values when run on different GPUs. For instance, we observed a Δ*G* of 0.20 for MyUb with an A6000, and 0.19 with an A5000.
 
+### Colab Implementation
+
+For a user-friendly version of IFUM, use this [Colab notebook](https://colab.research.google.com/drive/14TbHFp-BXfiv0vrCSNxyIlqMDOWX-8nV?usp=sharing#scrollTo=Evx4TGQqP3tc).
+
 ## Installation
 
 IFUM requires [ProtT5](https://github.com/agemagician/ProtTrans) and [ESM](https://github.com/facebookresearch/esm) (specifically, ESM-IF1).
@@ -53,10 +58,6 @@ IFUM requires [ProtT5](https://github.com/agemagician/ProtTrans) and [ESM](https
     ```
 
 3.  **Conda:** We strongly recommend using [miniconda](https://docs.anaconda.com/miniconda/install/).
-
-### Colab Implementation
-
-For a user-friendly version of IFUM, use this [Colab notebook](https://colab.research.google.com/drive/14TbHFp-BXfiv0vrCSNxyIlqMDOWX-8nV?usp=sharing#scrollTo=Evx4TGQqP3tc).
 
 ### Installation Steps:
 
