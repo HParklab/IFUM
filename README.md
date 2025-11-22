@@ -3,13 +3,14 @@ IFUM (***I***n silico ***E***valuation of un***F***olding ***F***ree ***E***nerg
 
 ![image](ieffeum.png)
 
-Please read the [manuscript](https://www.biorxiv.org/content/10.1101/2025.02.10.637420v1) before you use IFUM.
+Please read the [manuscript](https://www.biorxiv.org/content/10.1101/2025.02.10.637420v2) before you use IFUM.
 
 We thank those who support open science. Without them, developing IFUM was impossible.
 
 ## Table of Contents
 
 - [Citation](#citation)
+- [Colab Implementation](#colab-implementation)
 - [Before You Start](#before-you-start)
 - [Installation](#installation)
     - [Prerequisites](#prerequisites)
@@ -27,14 +28,18 @@ If you use the code, please cite:
 ```
 @article{
     doi:10.1101/2025.02.10.637420,
-    author = {Heechan Lee and Hahnbeom Park},
+    author = {Heechan Lee, Yugyeong Cho, Jeongwon Yun, Martin Steinegger, Ho Min Kim, Hahnbeom Park},
     title = {Protein folding stability estimation with an explicit consideration of unfolded states},
     journal = {bioRxiv},
     year = = {2025},
     doi = {10.1101/2025.02.10.637420},
-    URL = {[https://www.biorxiv.org/content/10.1101/2025.02.10.637420v1](https://www.biorxiv.org/content/10.1101/2025.02.10.637420v1)},
+    URL = {[https://www.biorxiv.org/content/10.1101/2025.02.10.637420v2](https://www.biorxiv.org/content/10.1101/2025.02.10.637420v2)},
 }
 ```
+## Colab Implementation
+
+For a user-friendly version of IFUM, use this [Colab notebook](https://colab.research.google.com/drive/14TbHFp-BXfiv0vrCSNxyIlqMDOWX-8nV?usp=sharing#scrollTo=Evx4TGQqP3tc).
+
 ## Before You Start
 
 IFUM may produce slightly different predicted Δ*G* values when run on different GPUs. For instance, we observed a Δ*G* of 0.20 for MyUb with an A6000, and 0.19 with an A5000.
@@ -62,14 +67,15 @@ Due to the archival of the ESM repository, installation requires a few specific 
 # create conda environment
 conda create --name IFUM python=3.9
 conda activate IFUM
-conda install conda-forge::cudatoolkit=11.7
-conda install nvidia/label/cuda-11.7.1::cuda
+# install cuda if necessary
+# conda install conda-forge::cudatoolkit=11.7
+# conda install nvidia/label/cuda-11.7.1::cuda
 ```
 ```bash
 # install dependencies
 pip install omegaconf pytorch_lightning==2.1 biopython ml_collections einops py3Dmol modelcif dm-tree torch==2.0.1 torchvision==0.15.2 torchaudio==2.0.2
 pip install git+https://github.com/NVIDIA/dllogger.git
-pip install git+https://github.com/sokrypton/openfold.git
+pip install git+https://github.com/sokrypton/openfold.git # this takes a bit
 pip install git+https://github.com/facebookresearch/esm.git
 pip install pyg_lib torch_scatter torch_sparse torch_cluster torch_spline_conv -f https://data.pyg.org/whl/torch-2.0.1+cu117.html
 pip install torch_geometric biotite transformers==4.49.0 sentencepiece numpy==1.26.1 pandas
