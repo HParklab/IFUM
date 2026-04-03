@@ -3,7 +3,7 @@ IFUM (***I***n silico ***E***valuation of un***F***olding ***F***ree ***E***nerg
 
 ![image](ieffeum.png)
 
-Please read the [manuscript](https://www.biorxiv.org/content/10.1101/2025.02.10.637420v2) before you use IFUM.
+Please read the [paper](https://www.nature.com/articles/s41467-026-68637-4) before you use IFUM.
 
 We thank those who support open science. Without them, developing IFUM was impossible.
 
@@ -21,19 +21,25 @@ We thank those who support open science. Without them, developing IFUM was impos
     - [Command-line Arguments](#command-line-arguments)
     - [Targeting a Specific GPU](#targeting-a-specific-gpu)
 - [Output CSV File](#output-csv-file)
+- [License](#license)
 - [(very important) Known Limitations](#known-limitations)
 
 ## Citation
-If you use the code, please cite:
+If you use the code, please cite the published paper:
+
+Lee, H., Cho, Y., Yun, J. *et al.* **Protein folding stability estimation with explicit consideration of unfolded states**. *Nature Communications* **17**, 1883 (2026). https://doi.org/10.1038/s41467-026-68637-4
+
 ```
-@article{
-    doi:10.1101/2025.02.10.637420,
-    author = {Heechan Lee, Yugyeong Cho, Jeongwon Yun, Martin Steinegger, Ho Min Kim, Hahnbeom Park},
-    title = {Protein folding stability estimation with an explicit consideration of unfolded states},
-    journal = {bioRxiv},
-    year = = {2025},
-    doi = {10.1101/2025.02.10.637420},
-    URL = {[https://www.biorxiv.org/content/10.1101/2025.02.10.637420v2](https://www.biorxiv.org/content/10.1101/2025.02.10.637420v2)},
+@article{Lee2026IFUM,
+    author = {Lee, Heechan and Cho, Yugyeong and Yun, Jeongwon and Steinegger, Martin and Kim, Ho Min and Park, Hahnbeom},
+    title = {Protein folding stability estimation with explicit consideration of unfolded states},
+    journal = {Nature Communications},
+    year = {2026},
+    volume = {17},
+    number = {1},
+    pages = {1883},
+    doi = {10.1038/s41467-026-68637-4},
+    url = {https://doi.org/10.1038/s41467-026-68637-4}
 }
 ```
 ## Colab Implementation
@@ -134,7 +140,7 @@ Here are examples for the two main workflows. The script handles all intermediat
         --out-path /path/to/your/results.csv
     ```
 
-**Important Note on Predicted Structures:** It is highly recommended to visually inspect any predicted structures (e.g., from ESMFold). [Poorly predicted structures can negatively impact IFUM's accuracy](https://www.biorxiv.org/content/10.1101/2025.02.10.637420v1). Consider using pre-computed, high-quality structures when available (e.g., from [AlphaFold DB](https://alphafold.ebi.ac.uk/) or experimental methods).
+**Important Note on Predicted Structures:** It is highly recommended to visually inspect any predicted structures (e.g., from ESMFold). [Poorly predicted structures can negatively impact IFUM's accuracy](https://www.nature.com/articles/s41467-026-68637-4). Consider using pre-computed, high-quality structures when available (e.g., from [AlphaFold DB](https://alphafold.ebi.ac.uk/) or experimental methods).
 
 ### Command-line Arguments
 
@@ -166,6 +172,14 @@ name,dG(kcal/mol)
 MyUb_WT,0.20
 MyUb_R1117A,-0.05
 ```
+
+## License
+
+This project is released under the [MIT License](LICENSE).
+
+### Third-party dependencies
+
+IFUM uses third-party components, including ESM and ProtT5. The MIT license for IFUM applies to the code in this repository, while each third-party dependency keeps its own license terms. If you redistribute IFUM, you should also comply with the license requirements of all bundled or installed dependencies.
 
 ## Known Limitations
 
